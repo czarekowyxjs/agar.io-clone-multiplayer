@@ -1,0 +1,32 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "description": "Backend for snake multiplayer",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./server.js --exec babel-node --presets babel-preset-env"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/czarekowyxjs/snake-multiplayer.git"
+  },
+  "author": "Cezary Góralski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/czarekowyxjs/snake-multiplayer/issues"
+  },
+  "homepage": "https://github.com/czarekowyxjs/snake-multiplayer#readme",
+  "dependencies": {
+    "koa": "^2.5.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-validate": "^1.0.7",
+    "mongoose": "^5.2.5",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.18.3"
+  }
+}
