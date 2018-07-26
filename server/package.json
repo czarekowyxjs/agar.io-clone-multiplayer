@@ -22,7 +22,6 @@
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "koa-validate": "^1.0.7",
-    "mongoose": "^5.2.5",
     "socket.io": "^2.1.1"
   },
   "devDependencies": {

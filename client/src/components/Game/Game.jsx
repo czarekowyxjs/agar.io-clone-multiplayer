@@ -7,6 +7,8 @@ import Canvas from '../Canvas/Canvas.jsx';
 
 import "./Game.css";
 
+let socket = socket_io("http://localhost:4000");
+
 class Game extends Component {
 	static propTypes = {
 		auth: PropTypes.shape({
@@ -18,12 +20,8 @@ class Game extends Component {
 		})
 	}
 
-	componentDidMount() {
-		this.socket = socket_io("http://localhost:4000");
-	}
-
 	componentWillUnmount() {
-		this.socket.disconnect();
+		socket.disconnect();
 	}
 
 	render() {
@@ -34,7 +32,7 @@ class Game extends Component {
 		return (
 			<div className="game-window">
 				<div className="game-body-canvas">
-					<Canvas user={this.props.user}/>
+					<Canvas user={this.props.user} socket={socket}/>
 				</div>
 			</div>
 		);

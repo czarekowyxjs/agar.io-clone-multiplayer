@@ -29,6 +29,9 @@ const server = http.createServer(app.callback()).listen(config.port, () => {
 
 const io = socket.listen(server);
 
+let game;
+let users = [];
+
 io.sockets.on('connection', socket => {
-	console.log(socket.id);
+	game = new Game(io, socket, users);
 });
