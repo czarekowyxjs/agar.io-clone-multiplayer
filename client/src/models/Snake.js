@@ -4,6 +4,7 @@ class Snake {
 		this.speed = 3;
 		this.fields = [];
 		this.users = [];
+		this.iter = 0;
 		this.privateSocket = '';
 		this.keys = {
 			up: false,
@@ -16,8 +17,10 @@ class Snake {
 	}
 
 	draw() {
+		this.iter++;
 		this.drawSnake();
 		this.updateFields();
+		this.drawUsers();
 	}
 
 	init() {
@@ -38,7 +41,15 @@ class Snake {
 	}
 
 	drawUsers() {
-
+		for(let i = 0;i < this.users.length;++i) {
+			if(this.users[i].snake && this.users[i].socket.toString() !== this.privateSocket.toString()) {
+				for(let j = 0;j < this.users[i].snake.fields.length;++j) {
+					const field = this.users[i].snake.fields[j];
+					this.ctx.fillStyle = field.color;
+					this.ctx.fillRect(field.x, field.y, field.width, field.height);
+				}
+			}
+		}
 	}
 
 	updateFields() {
@@ -56,6 +67,7 @@ class Snake {
 	}
 
 	keyDown(key) {
+		console.log(this.users);
 		this.keys[key] = true;
 	}
 

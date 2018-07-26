@@ -20,7 +20,7 @@ class Game {
 				username: data.username,
 				socket: this.socket.id,
 				createdAt: Math.floor(new Date().getTime()/1000),
-				snake: {}
+				snake: null
 			});
 
 			this.socket.emit('privateSocket', {
