@@ -1,13 +1,16 @@
 import rand from '../libs/rand';
 
-class Snake {
-	constructor(ctx, canvas, staticAbstractLayer, privateSocket, users, user) {
+class Hero {
+	constructor(ctx, canvas, staticAbstractLayer, privateSocket, users, user, socket) {
 		this.ctx = ctx;
 		this.canvas = canvas;
 		this.staticAbstractLayer = staticAbstractLayer;
 		this.userData = user;
+		this.points = [];
 		this.speed = 6;
-		this.r = 40;
+		this.reachedPoints = 0;
+		this.staticR = 40;
+		this.r = this.staticR;
 		this.pos = {
 			x: 0,
 			y: 0
@@ -15,18 +18,21 @@ class Snake {
 		this.color = "red";
 		this.users = users;
 		this.privateSocket = privateSocket;
+		this.socket = socket;
 		this.mouse = {
 			x: 0,
 			y: 0
 		};
-
+		this.logged = false;
+		this.lastCollision = {
+			pointX: 0,
+			pointY: 0
+		};
 		this.init();
 	}
 
 	init() {
 		// init position
-		this.pos.x = 5600;
-		this.pos.y = 2340;
 		if(this.users.length < 2) {
 			this.pos.x = rand(0+(this.r*5), this.staticAbstractLayer.width-(this.r*5));
 			this.pos.y = rand(0+(this.r*5), this.staticAbstractLayer.height-(this.r*5));
@@ -37,9 +43,11 @@ class Snake {
 
 	draw() {
 		this.drawUsers();
+		this.updateRadius();
 		this.drawHero();
 		this.drawUsername();
 		this.movable();
+		this.pointsCollision();
 	}
 
 	drawHero() {
@@ -47,6 +55,16 @@ class Snake {
 		this.ctx.beginPath();
 		this.ctx.arc(this.canvas.width/2, this.canvas.height/2, this.r, 0, 2*Math.PI);
 		this.ctx.fill();
+	}
+
+	updateRadius() {
+		for(let i = 0;i < this.users.length;++i) {
+			if(this.users[i].socket === this.privateSocket) {
+				this.reachedPoints = this.users[i].points;
+			}
+		}
+
+		this.r = this.staticR+this.reachedPoints;
 	}
 
 	drawUsername() {
@@ -96,21 +114,62 @@ class Snake {
 		const resX = (this.canvas.width/2)-this.mouse.x;
 		const resY = (this.canvas.height/2)-this.mouse.y;
 
-		if(resX > 0 && this.pos.x-this.r-resX/55 > 0) {
-			this.pos.x -= resX/55;
-		} else if(resX < 0 && this.pos.x+this.r+Math.abs(resX)/55 < this.staticAbstractLayer.width) {
-			this.pos.x += Math.abs(resX)/55;
+		let resXConv = Math.abs(resX)/45;
+		let resYConv = Math.abs(resY)/30;
+
+		if(resXConv > 13) {
+			resXConv = 13;
+		}
+
+		if(resYConv > 11) {
+			resYConv = 11;
+		}
+
+		if(resX > 0 && this.pos.x-this.r-resXConv > 0) {
+			this.pos.x -= resXConv;
+		} else if(resX < 0 && this.pos.x+this.r+resXConv < this.staticAbstractLayer.width) {
+			this.pos.x += resXConv;
 		} 
-		if(resY > 0 && this.pos.y-this.r-resY/50 > 0) {
-			this.pos.y -= resY/50;
-		} else if(resY < 0 && this.pos.y+this.r+Math.abs(resY)/50 < this.staticAbstractLayer.height) {
-			this.pos.y += Math.abs(resY)/50;
+		if(resY > 0 && this.pos.y-this.r-resYConv > 0) {
+			this.pos.y -= resYConv;
+		} else if(resY < 0 && this.pos.y+this.r+resYConv < this.staticAbstractLayer.height) {
+			this.pos.y += resYConv;
 		}
 	}
 
 	mouseMove(clientX, clientY) {
 		this.mouse.x = clientX;
 		this.mouse.y = clientY;
+	}
+
+	pointsCollision() {
+		for(let i = 0;i < this.points.length;++i) {
+			this.detectPointCollision(this.points[i], i);
+		}
+	}
+
+	detectPointCollision(point, index) {
+		const pointX = point.x;
+		const pointY = point.y;
+		const heroX = this.pos.x;
+		const heroY = this.pos.y;
+
+		const distance = Math.sqrt(Math.pow((pointX-heroX), 2)+Math.pow((pointY-heroY), 2));
+
+		if(distance < point.r+this.r) {
+			if(this.lastCollision.pointX === pointX && this.lastCollision.pointY === pointY) {
+
+			} else {
+				this.lastCollision = {
+					pointX: pointX,
+					pointY: pointY
+				};
+
+				this.socket.emit("pointCollision", {
+					pointIndex: index
+				});
+			}
+		}
 	}
 
 	inject(data, type) {
@@ -120,6 +179,9 @@ class Snake {
 				break;
 			case "privateSocket":
 				this.privateSocket = data;
+				break;
+			case "points":
+				this.points = data;
 				break;
 			default:
 				return false;
@@ -136,4 +198,4 @@ class Snake {
 	}
 }
 
-export default Snake;
+export default Hero;

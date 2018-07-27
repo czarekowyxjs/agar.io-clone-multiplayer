@@ -4,9 +4,6 @@ class Points {
 		this.canvas = canvas;
 		this.points = points;
 		this.heroData = {};
-
-
-		this.logged = false;
 	}
 
 	draw() {
@@ -27,13 +24,6 @@ class Points {
 		const diffY = heroY-pointY;
 
 		let x, y = 0;
-
-		if(!this.logged) {
-
-			console.log(this.heroData);
-
-			this.logged = true;
-		} 
 
 		if(diffX > 0) {
 			x = halfCanvasWidth-diffX;
@@ -59,6 +49,9 @@ class Points {
 		switch(type) {
 			case "hero":
 				this.heroData = data;
+				break;
+			case "points":
+				this.points = data;
 				break;
 			default:
 				return;

@@ -31,8 +31,7 @@ class Canvas extends Component {
 
 	ctx = null
 	background = null
-	snake = null
-	points = null
+	points = []
 	users = []
 	allPoints = []
 	privateSocket = ''
@@ -57,6 +56,7 @@ class Canvas extends Component {
 
 		this.props.socket.on('refreshUsers', data => {
 			this.users = data.users;
+			this.allPoints = data.points;
 		});
 
 		this.props.socket.on("startGame", data => {
@@ -69,7 +69,11 @@ class Canvas extends Component {
 			this.ctx = this.canvasRef.current.getContext('2d');
 			window.addEventListener('mousemove', this.handleMouseMove, false);
 			//
-			this.hero = new Hero(this.ctx, this.canvasRef.current, this.abstractLayer, this.privateSocket, this.users, this.props.user);
+			const user = {
+				username: this.props.user.username
+			};
+
+			this.hero = new Hero(this.ctx, this.canvasRef.current, this.abstractLayer, this.privateSocket, this.users, user, this.props.socket);
 			//
 			this.points = new Points(this.ctx, this.canvasRef.current, this.allPoints);
 			//			
@@ -94,10 +98,12 @@ class Canvas extends Component {
 			this.background.draw();
 			//
 			this.points.inject(this.hero.getHeroData(), "hero");
+			this.points.inject(this.allPoints, "points");
 			this.points.draw();
 			//
 			this.hero.inject(this.privateSocket, "privateSocket");
 			this.hero.inject(this.users, "users");
+			this.hero.inject(this.allPoints, "points");
 			this.hero.draw();
 			//
 			this.props.socket.emit('dataExchange', {

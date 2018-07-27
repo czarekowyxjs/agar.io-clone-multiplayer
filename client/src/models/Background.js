@@ -4,7 +4,7 @@ class Background {
 		this.canvas = canvas;
 		this.staticAbstractLayer = staticAbstractLayer;
 		this.lineWidth = 1;
-		this.lineSpace = 150;
+		this.lineSpace = 100;
 		this.bgColor = "white";
 		this.lineColor = "#dedede";
 		this.hero = {};
