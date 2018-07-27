@@ -34,8 +34,8 @@ class Hero {
 	init() {
 		// init position
 		if(this.users.length < 2) {
-			this.pos.x = rand(0+(this.r*5), this.staticAbstractLayer.width-(this.r*5));
-			this.pos.y = rand(0+(this.r*5), this.staticAbstractLayer.height-(this.r*5));
+			this.pos.x = rand(0+(this.staticR*5), this.staticAbstractLayer.width-(this.staticR*5));
+			this.pos.y = rand(0+(this.staticR*5), this.staticAbstractLayer.height-(this.staticR*5));
 		}
 		// init player color
 		this.color = "rgb("+rand(50,230)+","+rand(50,230)+","+rand(50,230)+")";
@@ -45,7 +45,8 @@ class Hero {
 		this.drawUsers();
 		this.updateRadius();
 		this.drawHero();
-		this.drawUsername();
+		this.drawUsername(this.userData.username, this.canvas.width/2, this.canvas.height/2);
+		this.drawPoints(this.reachedPoints, this.canvas.width/2, this.canvas.height/2);
 		this.movable();
 		this.pointsCollision();
 	}
@@ -64,18 +65,26 @@ class Hero {
 			}
 		}
 
-		this.r = this.staticR+this.reachedPoints;
+		this.r = this.staticR+(this.reachedPoints/10);
 	}
 
-	drawUsername() {
-		const username = this.userData.username;
+	drawUsername(username, x, y) {
 		const widthText = this.ctx.measureText(username).width;
 		this.ctx.font = "14pt Arial";
 		this.ctx.strokeStyle = "#3a3a3a";
 		this.ctx.lineWidth = 1;
-		this.ctx.strokeText(username,this.canvas.width/2-widthText/2, this.canvas.height/2+4);
+		this.ctx.strokeText(username,x-widthText/2, y+4);
 		this.ctx.fillStyle = "white";
-		this.ctx.fillText(username, this.canvas.width/2-widthText/2, this.canvas.height/2+4);
+		this.ctx.fillText(username, x-widthText/2, y+4);
+	}
+
+	drawPoints(_pointsValue, x, y) {
+		const pointsValue = _pointsValue.toString();
+		const widthText = this.ctx.measureText(pointsValue).width;
+		this.ctx.lineWidth = 1;
+		this.ctx.strokeText(pointsValue, x-widthText/2, y+22);
+		this.ctx.fillStyle = "white";
+		this.ctx.fillText(pointsValue, x-widthText/2, y+22);
 	}
 
 	drawUsers() {
@@ -100,15 +109,18 @@ class Hero {
 					} else if(spaceY <= 0) {
 						yMove = height+Math.abs(spaceY);
 					}
-
 					this.ctx.fillStyle = this.users[i].draw.color;
 					this.ctx.beginPath();
-					this.ctx.arc(xMove, yMove, this.users[i].draw.r, 0, 2*Math.PI);
+					this.ctx.arc(xMove, yMove, this.staticR+(this.users[i].points/10), 0, 2*Math.PI);
 					this.ctx.fill();
+					this.drawUsername(this.users[i].username, xMove, yMove);
+					this.drawPoints(this.users[i].points, xMove, yMove);
 				}
 			}
 		}
 	}
+
+
 
 	movable() {
 		const resX = (this.canvas.width/2)-this.mouse.x;

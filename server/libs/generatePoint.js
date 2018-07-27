@@ -6,8 +6,8 @@ export default (points) => {
 	let was;
 	let x,y;
 	while(exist) {
-		x = rand(100, 9900);
-		y = rand(100, 9900);
+		x = rand(100, 4900);
+		y = rand(100, 4900);
 		was = false;
 
 		for(let i = 0;i < points.length;++i) {

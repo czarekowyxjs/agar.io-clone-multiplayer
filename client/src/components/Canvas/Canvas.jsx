@@ -37,8 +37,8 @@ class Canvas extends Component {
 	privateSocket = ''
 
 	abstractLayer = {
-		width: 10000,
-		height: 10000
+		width: 5000,
+		height: 5000
 	}
 
 	componentDidMount() {
