@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Hero from '../../models/Hero';
 import Background from '../../models/Background';
+import Points from '../../models/Points';
 
 import "./Canvas.css";
 
@@ -11,8 +12,7 @@ class Canvas extends Component {
 
 		this.init = this.init.bind(this);
 		this.draw = this.draw.bind(this);
-		this.handleKeyDown = this.handleKeyDown.bind(this);
-		this.handleKeyUp = this.handleKeyUp.bind(this);
+		this.handleMouseMove = this.handleMouseMove.bind(this);
 		// ref
 		this.canvasRef = React.createRef();
 	}
@@ -30,8 +30,11 @@ class Canvas extends Component {
 	}
 
 	ctx = null
+	background = null
 	snake = null
+	points = null
 	users = []
+	allPoints = []
 	privateSocket = ''
 
 	abstractLayer = {
@@ -56,20 +59,28 @@ class Canvas extends Component {
 			this.users = data.users;
 		});
 
+		this.props.socket.on("startGame", data => {
+			this.users = data.users;
+			this.allPoints = data.points;
+			this.privateSocket = data.socket;
+			//
+			this.canvasRef.current.width = window.innerWidth;
+			this.canvasRef.current.height = window.innerHeight;
+			this.ctx = this.canvasRef.current.getContext('2d');
+			window.addEventListener('mousemove', this.handleMouseMove, false);
+			//
+			this.hero = new Hero(this.ctx, this.canvasRef.current, this.abstractLayer, this.privateSocket, this.users, this.props.user);
+			//
+			this.points = new Points(this.ctx, this.canvasRef.current, this.allPoints);
+			//			
+			this.background = new Background(this.ctx, this.canvasRef.current, this.abstractLayer);
+			//
+			this.draw();
+		});
+
 		this.props.socket.on('privateSocket', data => {
 			this.privateSocket = data.socket;
 		});
-
-		this.canvasRef.current.width = window.innerWidth;
-		this.canvasRef.current.height = window.innerHeight;
-		this.ctx = this.canvasRef.current.getContext('2d');
-		window.addEventListener('keydown', this.handleKeyDown, false);
-		window.addEventListener('keyup', this.handleKeyUp, false);
-		//
-		this.hero = new Hero(this.ctx, this.canvasRef.current, this.abstractLayer);
-		this.background = new Background(this.ctx, this.canvasRef.current, this.abstractLayer);
-		//
-		this.draw();
 	}
 
 	draw(time) {
@@ -82,6 +93,9 @@ class Canvas extends Component {
 			this.background.inject(this.hero.getHeroData(), "hero");
 			this.background.draw();
 			//
+			this.points.inject(this.hero.getHeroData(), "hero");
+			this.points.draw();
+			//
 			this.hero.inject(this.privateSocket, "privateSocket");
 			this.hero.inject(this.users, "users");
 			this.hero.draw();
@@ -92,42 +106,8 @@ class Canvas extends Component {
 		}
 	}
 
-	handleKeyDown(e) {
-		switch(e.key) {
-			case "w":
-			case "ArrowUp":
-				return this.hero.keyDown('up');
-			case "s":
-			case "ArrowDown":
-				return this.hero.keyDown('down');
-			case "a":
-			case "ArrowLeft":
-				return this.hero.keyDown('left');
-			case "d":
-			case "ArrowRight":
-				return this.hero.keyDown('right');
-			default:
-				return;
-		}
-	}
-
-	handleKeyUp(e) {
-		switch(e.key) {
-			case "w":
-			case "ArrowUp":
-				return this.hero.keyUp('up');
-			case "s":
-			case "ArrowDown":
-				return this.hero.keyUp('down');
-			case "a":
-			case "ArrowLeft":
-				return this.hero.keyUp('left');
-			case "d":
-			case "ArrowRight":
-				return this.hero.keyUp('right');
-			default:
-				return;
-		}
+	handleMouseMove(e) {
+		this.hero.mouseMove(e.clientX, e.clientY);
 	}
 
 	render() {

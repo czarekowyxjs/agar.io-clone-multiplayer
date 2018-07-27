@@ -5,8 +5,8 @@ class Background {
 		this.staticAbstractLayer = staticAbstractLayer;
 		this.lineWidth = 1;
 		this.lineSpace = 150;
-		this.bgColor = "black";
-		this.lineColor = "white";
+		this.bgColor = "white";
+		this.lineColor = "#dedede";
 		this.hero = {};
 	}
 

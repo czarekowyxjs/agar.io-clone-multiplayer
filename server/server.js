@@ -4,6 +4,7 @@ import bodyParser from 'koa-bodyparser';
 import validator from 'koa-validate';
 import socket from 'socket.io';
 import config from './config/server.conf';
+import generateInitialPoints from './libs/generateInitialPoints';
 
 // api controller
 import ApiController from './controllers/ApiController';
@@ -31,7 +32,10 @@ const io = socket.listen(server);
 
 let game;
 let users = [];
+let points = [];
+
+points = generateInitialPoints();
 
 io.sockets.on('connection', socket => {
-	game = new Game(io, socket, users);
+	game = new Game(io, socket, users, points);
 });

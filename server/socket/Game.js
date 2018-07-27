@@ -1,8 +1,9 @@
 class Game {
-	constructor(io, socket, users) {
+	constructor(io, socket, users, points) {
 		this.io = io;
 		this.socket = socket;
 		this.users = users;
+		this.points = points;
 	
 		this.initHandlers();
 	}
@@ -30,6 +31,13 @@ class Game {
 			this.io.emit('refreshUsers', {
 				users: this.users
 			});
+
+			this.socket.emit("startGame", {
+				users: this.users,
+				socket: this.socket.id,
+				points: this.points
+			});
+
 		});
 	}
 
