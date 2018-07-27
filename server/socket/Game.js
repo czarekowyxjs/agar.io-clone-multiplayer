@@ -20,7 +20,7 @@ class Game {
 				username: data.username,
 				socket: this.socket.id,
 				createdAt: Math.floor(new Date().getTime()/1000),
-				snake: null
+				draw: null
 			});
 
 			this.socket.emit('privateSocket', {
@@ -44,13 +44,11 @@ class Game {
 					break;
 				}
 			}
-
-			this.users[toExchange].snake = data.snakeData;
-
+			this.users[toExchange].draw = data.heroData;
+			
 			this.socket.emit("refreshUsers", {
 				users: this.users
 			});
-
 		});
 	}
 

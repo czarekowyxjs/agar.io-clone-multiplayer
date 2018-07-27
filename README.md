@@ -1,2 +1,1 @@
-# snake-multiplayer
-Real time, multiplayer snake game.
+# agar.io game - clone multiplayer

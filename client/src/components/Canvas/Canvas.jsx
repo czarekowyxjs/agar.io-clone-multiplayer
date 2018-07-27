@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Snake from '../../models/Snake';
+import Hero from '../../models/Hero';
+import Background from '../../models/Background';
 
 import "./Canvas.css";
 
@@ -33,6 +34,11 @@ class Canvas extends Component {
 	users = []
 	privateSocket = ''
 
+	abstractLayer = {
+		width: 6000,
+		height: 6000
+	}
+
 	componentDidMount() {
 		this.init();
 	}
@@ -60,7 +66,8 @@ class Canvas extends Component {
 		window.addEventListener('keydown', this.handleKeyDown, false);
 		window.addEventListener('keyup', this.handleKeyUp, false);
 		//
-		this.snake = new Snake(this.ctx, this.canvasRef.current);
+		this.hero = new Hero(this.ctx, this.canvasRef.current, this.abstractLayer);
+		this.background = new Background(this.ctx, this.canvasRef.current, this.abstractLayer);
 		//
 		this.draw();
 	}
@@ -70,16 +77,16 @@ class Canvas extends Component {
 
 		if(time-this.config.last >= 1000/this.config.fps) {
 			this.config.last = time;
+			this.ctx.clearRect(0,0,this.canvasRef.current.width,this.canvasRef.current.height);
 			//
-			this.ctx.fillStyle = "black";
-			this.ctx.fillRect(0,0,this.canvasRef.current.width,this.canvasRef.current.height);
+			this.background.draw();
 			//
-			this.snake.inject(this.privateSocket, "privateSocket");
-			this.snake.inject(this.users, "users");
-			this.snake.draw();
+			this.hero.inject(this.privateSocket, "privateSocket");
+			this.hero.inject(this.users, "users");
+			this.hero.draw();
 			//
 			this.props.socket.emit('dataExchange', {
-				snakeData: this.snake.getSnakeData()
+				heroData: this.hero.getHeroData()
 			});
 		}
 	}
@@ -88,16 +95,16 @@ class Canvas extends Component {
 		switch(e.key) {
 			case "w":
 			case "ArrowUp":
-				return this.snake.keyDown('up');
+				return this.hero.keyDown('up');
 			case "s":
 			case "ArrowDown":
-				return this.snake.keyDown('down');
+				return this.hero.keyDown('down');
 			case "a":
 			case "ArrowLeft":
-				return this.snake.keyDown('left');
+				return this.hero.keyDown('left');
 			case "d":
 			case "ArrowRight":
-				return this.snake.keyDown('right');
+				return this.hero.keyDown('right');
 			default:
 				return;
 		}
@@ -107,16 +114,16 @@ class Canvas extends Component {
 		switch(e.key) {
 			case "w":
 			case "ArrowUp":
-				return this.snake.keyUp('up');
+				return this.hero.keyUp('up');
 			case "s":
 			case "ArrowDown":
-				return this.snake.keyUp('down');
+				return this.hero.keyUp('down');
 			case "a":
 			case "ArrowLeft":
-				return this.snake.keyUp('left');
+				return this.hero.keyUp('left');
 			case "d":
 			case "ArrowRight":
-				return this.snake.keyUp('right');
+				return this.hero.keyUp('right');
 			default:
 				return;
 		}

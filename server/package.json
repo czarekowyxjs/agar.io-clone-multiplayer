@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "0.1.0",
-  "description": "Backend for snake multiplayer",
+  "description": "Backend for clone of agar.io game multiplayer",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/czarekowyxjs/snake-multiplayer.git"
+    "url": "git+https://github.com/czarekowyxjs/agar.io-clone-multiplayer.git"
   },
   "author": "Cezary Góralski",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/czarekowyxjs/snake-multiplayer/issues"
+    "url": "https://github.com/czarekowyxjs/agar.io-clone-multiplayer/issues"
   },
-  "homepage": "https://github.com/czarekowyxjs/snake-multiplayer#readme",
+  "homepage": "https://github.com/czarekowyxjs/agar.io-clone-multiplayer#readme",
   "dependencies": {
     "koa": "^2.5.2",
     "koa-bodyparser": "^4.2.1",
