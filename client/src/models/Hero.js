@@ -3,8 +3,8 @@ class Snake {
 		this.ctx = ctx;
 		this.canvas = canvas;
 		this.staticAbstractLayer = staticAbstractLayer;
-		this.speed = 3;
-		this.r = 20;
+		this.speed = 6;
+		this.r = 30;
 		this.pos = {
 			x: 0,
 			y: 0
@@ -23,14 +23,14 @@ class Snake {
 	}
 
 	init() {
-		this.pos.x = 50;
-		this.pos.y = 50;
+		this.pos.x = 5600;
+		this.pos.y = 2340;
 	}
 
 	draw() {
+		this.drawUsers();
 		this.drawHero();
 		this.movable();
-		this.drawUsers();
 	}
 
 	drawHero() {
@@ -51,15 +51,15 @@ class Snake {
 					let xMove;
 					let yMove;
 
-					if(spaceX > 0) {
+					if(spaceX >= 0) {
 						xMove = width-spaceX;
-					} else if(spaceX < 0) {
+					} else if(spaceX <= 0) {
 						xMove = width+Math.abs(spaceX);
 					}
 
-					if(spaceY > 0) {
+					if(spaceY >= 0) {
 						yMove = height-spaceY;
-					} else if(spaceY < 0) {
+					} else if(spaceY <= 0) {
 						yMove = height+Math.abs(spaceY);
 					}
 
@@ -67,8 +67,6 @@ class Snake {
 					this.ctx.beginPath();
 					this.ctx.arc(xMove, yMove, this.users[i].draw.r, 0, 2*Math.PI);
 					this.ctx.fill();
-
-					console.log(spaceX+" "+width);
 				}
 			}
 		}
@@ -79,15 +77,14 @@ class Snake {
 			this.pos.y -= this.speed;
 		} else if(this.keys.down) {
 			this.pos.y += this.speed;
-		} else if(this.keys.left) {
+		} else if(this.keys.left && this.pos.x+this.r > 0+this.r) {
 			this.pos.x -= this.speed;
-		} else if(this.keys.right) {
+		} else if(this.keys.right && this.pos.x+this.r < this.staticAbstractLayer.width) {
 			this.pos.x += this.speed;
 		}
 	}
 
 	keyDown(key) {
-		console.log(this.users);
 		this.keys[key] = true;
 	}
 

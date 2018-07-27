@@ -35,8 +35,8 @@ class Canvas extends Component {
 	privateSocket = ''
 
 	abstractLayer = {
-		width: 6000,
-		height: 6000
+		width: 10000,
+		height: 10000
 	}
 
 	componentDidMount() {
@@ -79,6 +79,7 @@ class Canvas extends Component {
 			this.config.last = time;
 			this.ctx.clearRect(0,0,this.canvasRef.current.width,this.canvasRef.current.height);
 			//
+			this.background.inject(this.hero.getHeroData(), "hero");
 			this.background.draw();
 			//
 			this.hero.inject(this.privateSocket, "privateSocket");
