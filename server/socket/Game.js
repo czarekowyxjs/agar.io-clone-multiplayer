@@ -59,19 +59,19 @@ class Game {
 				if(users[i]) {
 					actualPoints = users[i].points;
 					if(actualPoints > 300 && actualPoints <= 500) {
-						users[i].points -= 0.07;
+						users[i].points -= 0.04;
 					} else if(actualPoints > 500 && actualPoints <= 700) {
-						users[i].points -= 0.12;
+						users[i].points -= 0.06;
 					} else if(actualPoints > 700 && actualPoints <= 1000) {
-						users[i].points -= 0.16;
+						users[i].points -= 0.08;
 					} else if(actualPoints > 1000 && actualPoints <= 1500) {
-						users[i].points -= 0.25;
+						users[i].points -= 0.1;
 					} else if(actualPoints > 1500 && actualPoints <= 2500) {
-						users[i].points -= 0.6;
+						users[i].points -= 0.13;
 					} else if(actualPoints > 2500 && actualPoints <= 5000) {
-						users[i].points -= 1.1;
+						users[i].points -= 0.2;
 					} else if(actualPoints > 5000){
-						users[i].points -= 2;
+						users[i].points -= 0.4;
 					}
 				}
 			}
@@ -113,9 +113,7 @@ class Game {
 				}
 			}
 			// data exchange
-			//if(this.users[toExchange] && this.users[toExchange].draw && data.heroData) {
-				this.users[toExchange].draw = data.heroData;
-			//}
+			this.users[toExchange].draw = data.heroData;
 
 			this.socket.emit("refreshUsers", {
 				users: this.users,
@@ -133,7 +131,7 @@ class Game {
 
 			for(let i = 0;i < this.users.length;++i) {
 				if(this.users[i].socket.toString() === this.socket.id.toString()) {
-					this.users[i].points += 10;
+					this.users[i].points += 1;
 					break;
 				}
 			}

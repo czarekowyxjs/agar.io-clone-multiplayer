@@ -24,11 +24,14 @@ class Canvas extends Component {
 		socket: PropTypes.object
 	}
 
+	/**
+		not change
+	*/
 	config = {
 		last: 0,
 		fps: 60
 	}
-
+	
 	ctx = null
 	background = null
 	points = []
@@ -36,6 +39,11 @@ class Canvas extends Component {
 	allPoints = []
 	privateSocket = ''
 
+	/**
+		**************************************
+		* abstractLayer defines sizes of map *
+		**************************************
+	*/
 	abstractLayer = {
 		width: 5000,
 		height: 5000

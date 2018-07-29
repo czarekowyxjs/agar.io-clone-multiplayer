@@ -1,4 +1,5 @@
 import rand from './rand';
+import config from '../config/server.conf';
 
 export default (points) => {
 
@@ -6,8 +7,8 @@ export default (points) => {
 	let was;
 	let x,y;
 	while(exist) {
-		x = rand(100, 4900);
-		y = rand(100, 4900);
+		x = rand(config.game.pointsRange.width.from, config.game.pointsRange.width.to);
+		y = rand(config.game.pointsRange.height.from, config.game.pointsRange.height.to);
 		was = false;
 
 		for(let i = 0;i < points.length;++i) {
@@ -23,7 +24,7 @@ export default (points) => {
 
 	return {
 		color: "rgb("+rand(50,230)+","+rand(50,230)+","+rand(50,230)+")",
-		r: 12,
+		r: config.game.pointRadius,
 		x: x,
 		y: y
 	};
