@@ -9,7 +9,8 @@ class Hero {
 		this.points = [];
 		this.speed = 6;
 		this.reachedPoints = 0;
-		this.staticR = 40;
+		this.staticR = 30;
+		this.staticComputationalR = 10;
 		this.r = this.staticR;
 		this.pos = {
 			x: 0,
@@ -24,9 +25,12 @@ class Hero {
 			y: 0
 		};
 		this.logged = false;
-		this.lastCollision = {
+		this.lastPointCollision = {
 			pointX: 0,
 			pointY: 0
+		};
+		this.lastPlayerCollision = {
+			socket: ''
 		};
 		this.init();
 	}
@@ -48,6 +52,7 @@ class Hero {
 		this.drawUsername(this.userData.username, this.canvas.width/2, this.canvas.height/2);
 		this.drawPoints(this.reachedPoints, this.canvas.width/2, this.canvas.height/2);
 		this.movable();
+		this.playersCollision();
 		this.pointsCollision();
 	}
 
@@ -65,7 +70,7 @@ class Hero {
 			}
 		}
 
-		this.r = this.staticR+(this.reachedPoints/10);
+		this.r = this.staticR+(this.reachedPoints/this.staticComputationalR);
 	}
 
 	drawUsername(username, x, y) {
@@ -79,8 +84,9 @@ class Hero {
 	}
 
 	drawPoints(_pointsValue, x, y) {
-		const pointsValue = _pointsValue.toString();
+		const pointsValue = Math.floor(_pointsValue).toString();
 		const widthText = this.ctx.measureText(pointsValue).width;
+		this.ctx.font = "13pt Arial";
 		this.ctx.lineWidth = 1;
 		this.ctx.strokeText(pointsValue, x-widthText/2, y+22);
 		this.ctx.fillStyle = "white";
@@ -111,7 +117,7 @@ class Hero {
 					}
 					this.ctx.fillStyle = this.users[i].draw.color;
 					this.ctx.beginPath();
-					this.ctx.arc(xMove, yMove, this.staticR+(this.users[i].points/10), 0, 2*Math.PI);
+					this.ctx.arc(xMove, yMove, this.staticR+(this.users[i].points/this.staticComputationalR), 0, 2*Math.PI);
 					this.ctx.fill();
 					this.drawUsername(this.users[i].username, xMove, yMove);
 					this.drawPoints(this.users[i].points, xMove, yMove);
@@ -120,28 +126,27 @@ class Hero {
 		}
 	}
 
-
-
 	movable() {
 		const resX = (this.canvas.width/2)-this.mouse.x;
 		const resY = (this.canvas.height/2)-this.mouse.y;
-
+		//
 		let resXConv = Math.abs(resX)/45;
 		let resYConv = Math.abs(resY)/30;
-
+		//
 		if(resXConv > 13) {
 			resXConv = 13;
 		}
-
+		//
 		if(resYConv > 11) {
 			resYConv = 11;
 		}
-
+		//
 		if(resX > 0 && this.pos.x-this.r-resXConv > 0) {
 			this.pos.x -= resXConv;
 		} else if(resX < 0 && this.pos.x+this.r+resXConv < this.staticAbstractLayer.width) {
 			this.pos.x += resXConv;
 		} 
+		//
 		if(resY > 0 && this.pos.y-this.r-resYConv > 0) {
 			this.pos.y -= resYConv;
 		} else if(resY < 0 && this.pos.y+this.r+resYConv < this.staticAbstractLayer.height) {
@@ -152,6 +157,60 @@ class Hero {
 	mouseMove(clientX, clientY) {
 		this.mouse.x = clientX;
 		this.mouse.y = clientY;
+	}
+
+	playersCollision() {
+		for(let i = 0;i < this.users.length;++i) {
+			this.detectPlayerCollision(this.users[i], i);
+		}
+	}
+
+	detectPlayerCollision(user, index) {
+		if(user.socket === this.privateSocket || !user.draw) {
+			return;
+		}
+		//
+		const enemyX = user.draw.pos.x;
+		const enemyY = user.draw.pos.y;
+		const enemyPoints = user.points;
+		const heroX = this.pos.x;
+		const heroY = this.pos.y;
+		const heroPoints = this.reachedPoints;
+		//
+		const enemyR = this.staticR+(enemyPoints/this.staticComputationalR);
+		const heroR = this.staticR+(heroPoints/this.staticComputationalR);
+		//
+		const diff = Math.abs(heroPoints-enemyPoints);
+		const minPoints = Math.min(heroPoints, enemyPoints);
+		//
+		if(diff > minPoints/10) {
+			let winnerSocket;
+
+			if(heroR > enemyR) {
+				winnerSocket = this.privateSocket;
+			} else {
+				winnerSocket = user.socket;
+			}
+
+			const distance = Math.sqrt(Math.pow((enemyX-heroX), 2)+Math.pow((enemyY-heroY), 2));
+			const minRadius = Math.min(enemyR, heroR);
+
+			if(distance < minRadius) {
+				if(this.lastPlayerCollision.socket !== user.socket) {
+					this.lastPlayerCollision.socket = user.socket;
+					console.log('collision');
+					if(winnerSocket === this.privateSocket) {
+						this.socket.emit("winner", {
+							socket: this.privateSocket
+						});
+					} else {
+						this.socket.emit("loser", {
+							socket: this.privateSocket
+						});
+					}
+				}
+			}
+		}
 	}
 
 	pointsCollision() {
@@ -165,18 +224,20 @@ class Hero {
 		const pointY = point.y;
 		const heroX = this.pos.x;
 		const heroY = this.pos.y;
-
+		//
 		const distance = Math.sqrt(Math.pow((pointX-heroX), 2)+Math.pow((pointY-heroY), 2));
-
-		if(distance < point.r+this.r) {
-			if(this.lastCollision.pointX === pointX && this.lastCollision.pointY === pointY) {
+		//
+		const pointR = point.r-(this.reachedPoints/200);
+		//
+		if(distance < pointR+this.r) {
+			if(this.lastPointCollision.pointX === pointX && this.lastPointCollision.pointY === pointY) {
 
 			} else {
-				this.lastCollision = {
+				this.lastPointCollision = {
 					pointX: pointX,
 					pointY: pointY
 				};
-
+				//
 				this.socket.emit("pointCollision", {
 					pointIndex: index
 				});
@@ -205,7 +266,8 @@ class Hero {
 			speed: this.speed,
 			pos: this.pos,
 			r: this.r,
-			color: this.color
+			color: this.color,
+			points: this.reachedPoints
 		};
 	}
 }

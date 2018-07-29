@@ -13,6 +13,7 @@ class Game {
 	initHandlers() {
 		this.handleJoin();
 		this.handleDataExchange();
+		this.handlePlayerWinnerCollision();
 		this.handlePointCollision();
 		this.handleDisconnect();
 	}
@@ -57,13 +58,36 @@ class Game {
 					break;
 				}
 			}
+			// data exchange
 			this.users[toExchange].draw = data.heroData;
 			
+			// update user points
+			const actualPoints = this.users[toExchange].points;
+			if(actualPoints > 300 && actualPoints <= 500) {
+				this.users[toExchange].points -= 0.07;
+			} else if(actualPoints > 500 && actualPoints <= 700) {
+				this.users[toExchange].points -= 0.12;
+			} else if(actualPoints > 700 && actualPoints <= 1000) {
+				this.users[toExchange].points -= 0.16;
+			} else if(actualPoints > 1000 && actualPoints <= 1500) {
+				this.users[toExchange].points -= 0.25;
+			} else if(actualPoints > 1500 && actualPoints <= 2500) {
+				this.users[toExchange].points -= 0.6;
+			} else if(actualPoints > 2500 && actualPoints <= 5000) {
+				this.users[toExchange].points -= 1.1;
+			} else if(actualPoints > 5000){
+				this.users[toExchange].points -= 2;
+			}
+
 			this.socket.emit("refreshUsers", {
 				users: this.users,
 				points: this.points
 			});
 		});
+	}
+
+	handlePlayerWinnerCollision() {
+		
 	}
 
 	handlePointCollision() {

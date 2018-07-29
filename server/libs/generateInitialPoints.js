@@ -1,7 +1,7 @@
 import generatePoint from './generatePoint';
 
 export default () => {
-	const maxPoints = 1500;
+	const maxPoints = 800;
 	let points = [];
 	let point;
 	for(let i = 0;i < maxPoints;++i) {

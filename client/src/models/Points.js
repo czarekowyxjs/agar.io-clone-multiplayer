@@ -4,6 +4,7 @@ class Points {
 		this.canvas = canvas;
 		this.points = points;
 		this.heroData = {};
+		this.logged = false;
 	}
 
 	draw() {
@@ -36,11 +37,15 @@ class Points {
 		} else if(diffY < 0) {
 			y = halfCanvasHeight+Math.abs(diffY);
 		}
-
+		
+		let newRadius = point.r-(this.heroData.points/200);
+		if(newRadius < 3) {
+			newRadius = 3;
+		}
 
 		this.ctx.fillStyle = point.color;
 		this.ctx.beginPath();
-		this.ctx.arc(x, y, point.r, 0, 2*Math.PI);
+		this.ctx.arc(x, y, newRadius, 0, 2*Math.PI);
 		this.ctx.fill();
 		
 	}
