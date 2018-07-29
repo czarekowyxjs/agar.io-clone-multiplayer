@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import Sound from 'react-sound';
 import { connect } from 'react-redux';
 import socket_io from 'socket.io-client';
 import Canvas from '../Canvas/Canvas.jsx';
@@ -20,10 +21,6 @@ class Game extends Component {
 		})
 	}
 
-	componentWillUnmount() {
-		socket.disconnect();
-	}
-
 	render() {
 		if(!this.props.auth.logged) {
 			return <Redirect to="/"/>;
@@ -32,7 +29,11 @@ class Game extends Component {
 		return (
 			<div className="game-window">
 				<div className="game-body-canvas">
-					<Canvas user={this.props.user} socket={socket}/>
+					<Sound 
+						url="/sounds/sound_001.mp3"
+						playStatus={Sound.status.PLAYING}
+						loop={true}/>
+					<Canvas {...this.props} user={this.props.user} socket={socket}/>
 				</div>
 			</div>
 		);

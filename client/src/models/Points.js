@@ -38,16 +38,16 @@ class Points {
 			y = halfCanvasHeight+Math.abs(diffY);
 		}
 		
-		let newRadius = point.r-(this.heroData.points/200);
-		if(newRadius < 3) {
-			newRadius = 3;
+		let newRadius = point.r-(this.heroData.points/300);
+		if(newRadius < 4) {
+			newRadius = 4;
 		}
-
+		//
 		this.ctx.fillStyle = point.color;
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, newRadius, 0, 2*Math.PI);
 		this.ctx.fill();
-		
+		//
 	}
 
 	inject(data, type) {

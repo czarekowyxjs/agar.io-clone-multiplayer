@@ -4,6 +4,8 @@ class Hero {
 	constructor(ctx, canvas, staticAbstractLayer, privateSocket, users, user, socket) {
 		this.ctx = ctx;
 		this.canvas = canvas;
+		this.minLength = Math.min(this.canvas.width, this.canvas.height);
+		this.scale = this.minLength*0.01;
 		this.staticAbstractLayer = staticAbstractLayer;
 		this.userData = user;
 		this.points = [];
@@ -69,8 +71,11 @@ class Hero {
 				this.reachedPoints = this.users[i].points;
 			}
 		}
-
 		this.r = this.staticR+(this.reachedPoints/this.staticComputationalR);
+
+		if(this.r > this.canvas.height/4) {
+			this.r = this.canvas.height/4;
+		}
 	}
 
 	drawUsername(username, x, y) {
@@ -115,9 +120,18 @@ class Hero {
 					} else if(spaceY <= 0) {
 						yMove = height+Math.abs(spaceY);
 					}
+
+					let newRadius;
+
+					newRadius = this.staticR+(this.users[i].points/this.staticComputationalR);
+
+					if(newRadius > this.canvas.height/4) {
+						newRadius = this.canvas.height/4;
+					}
+
 					this.ctx.fillStyle = this.users[i].draw.color;
 					this.ctx.beginPath();
-					this.ctx.arc(xMove, yMove, this.staticR+(this.users[i].points/this.staticComputationalR), 0, 2*Math.PI);
+					this.ctx.arc(xMove, yMove, newRadius, 0, 2*Math.PI);
 					this.ctx.fill();
 					this.drawUsername(this.users[i].username, xMove, yMove);
 					this.drawPoints(this.users[i].points, xMove, yMove);
@@ -177,37 +191,48 @@ class Hero {
 		const heroY = this.pos.y;
 		const heroPoints = this.reachedPoints;
 		//
-		const enemyR = this.staticR+(enemyPoints/this.staticComputationalR);
-		const heroR = this.staticR+(heroPoints/this.staticComputationalR);
+		let enemyR = this.staticR+(enemyPoints/this.staticComputationalR);
+		let heroR = this.staticR+(heroPoints/this.staticComputationalR);
+		//
+		if(heroR > this.canvas.height/4) {
+			heroR = this.canvas.height/4;
+		}
+		//
+		if(enemyR > this.canvas.height/4) {
+			enemyR = this.canvas.height/4;
+		}
 		//
 		const diff = Math.abs(heroPoints-enemyPoints);
 		const minPoints = Math.min(heroPoints, enemyPoints);
 		//
 		if(diff > minPoints/10) {
-			let winnerSocket;
-
-			if(heroR > enemyR) {
-				winnerSocket = this.privateSocket;
+			let winnerData, loserData;
+			//
+			const heroData = {
+				username: this.userData.username,
+				socket: this.privateSocket
+			};
+			//
+			if(heroPoints > enemyPoints) {
+				winnerData = heroData;
+				loserData = user;
 			} else {
-				winnerSocket = user.socket;
+				winnerData = user;
+				loserData = heroData;
 			}
-
+			//
 			const distance = Math.sqrt(Math.pow((enemyX-heroX), 2)+Math.pow((enemyY-heroY), 2));
-			const minRadius = Math.min(enemyR, heroR);
-
-			if(distance < minRadius) {
+			const maxRadius = Math.max(enemyR, heroR);
+			//
+			if(distance < maxRadius) {
 				if(this.lastPlayerCollision.socket !== user.socket) {
 					this.lastPlayerCollision.socket = user.socket;
-					console.log('collision');
-					if(winnerSocket === this.privateSocket) {
-						this.socket.emit("winner", {
-							socket: this.privateSocket
-						});
-					} else {
-						this.socket.emit("loser", {
-							socket: this.privateSocket
-						});
-					}
+					console.log(this.users);
+					console.log('collision: '+winnerData);
+					this.socket.emit("playersCollision", {
+						winnerData: winnerData,
+						loserData: loserData
+					});
 				}
 			}
 		}

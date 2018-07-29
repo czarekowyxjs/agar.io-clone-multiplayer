@@ -13,7 +13,7 @@ class Game {
 	initHandlers() {
 		this.handleJoin();
 		this.handleDataExchange();
-		this.handlePlayerWinnerCollision();
+		this.handlePlayersCollision();
 		this.handlePointCollision();
 		this.handleDisconnect();
 	}
@@ -25,8 +25,13 @@ class Game {
 				username: data.username,
 				socket: this.socket.id,
 				createdAt: Math.floor(new Date().getTime()/1000),
+				canvas: {
+					width: data.canvasWidth,
+					height: data.canvasHeight
+				},
 				points: 0,
-				draw: null
+				draw: null,
+				playing: true
 			});
 
 			this.socket.emit('privateSocket', {
@@ -47,11 +52,60 @@ class Game {
 		});
 	}
 
+	static updateUsersPoints(users) {
+		let actualPoints;
+		if(users) {
+			for(let i = 0;i < users.length;++i) {
+				if(users[i]) {
+					actualPoints = users[i].points;
+					if(actualPoints > 300 && actualPoints <= 500) {
+						users[i].points -= 0.07;
+					} else if(actualPoints > 500 && actualPoints <= 700) {
+						users[i].points -= 0.12;
+					} else if(actualPoints > 700 && actualPoints <= 1000) {
+						users[i].points -= 0.16;
+					} else if(actualPoints > 1000 && actualPoints <= 1500) {
+						users[i].points -= 0.25;
+					} else if(actualPoints > 1500 && actualPoints <= 2500) {
+						users[i].points -= 0.6;
+					} else if(actualPoints > 2500 && actualPoints <= 5000) {
+						users[i].points -= 1.1;
+					} else if(actualPoints > 5000){
+						users[i].points -= 2;
+					}
+				}
+			}
+		}
+	}
+
+	handlePlayersCollision() {
+		this.socket.on("playersCollision", data => {
+			const winner = data.winnerData;
+			const loser = data.loserData;
+			//
+			let winnerIndex, loserIndex = null;
+			//
+			for(let i = 0;i < this.users.length;++i) {
+				if(winnerIndex && loserIndex) break;
+				if(this.users[i].socket === winner.socket) winnerIndex = i;
+				if(this.users[i].socket === loser.socket) loserIndex = i;
+			}
+			//
+			this.users[winnerIndex].points += (this.users[loserIndex].points/2);
+			//
+			this.io.to(loser.socket).emit("lostGame", {
+				killer: winner.username,
+				userData: this.users[loserIndex]
+			});
+			//
+		});
+	}
+
 	handleDataExchange() {
 		this.socket.on('dataExchange', data => {
-
+			//
 			let toExchange;
-
+			//
 			for(let i = 0;i < this.users.length;++i) {
 				if(this.users[i].socket === this.socket.id) {
 					toExchange = i;
@@ -59,35 +113,15 @@ class Game {
 				}
 			}
 			// data exchange
-			this.users[toExchange].draw = data.heroData;
-			
-			// update user points
-			const actualPoints = this.users[toExchange].points;
-			if(actualPoints > 300 && actualPoints <= 500) {
-				this.users[toExchange].points -= 0.07;
-			} else if(actualPoints > 500 && actualPoints <= 700) {
-				this.users[toExchange].points -= 0.12;
-			} else if(actualPoints > 700 && actualPoints <= 1000) {
-				this.users[toExchange].points -= 0.16;
-			} else if(actualPoints > 1000 && actualPoints <= 1500) {
-				this.users[toExchange].points -= 0.25;
-			} else if(actualPoints > 1500 && actualPoints <= 2500) {
-				this.users[toExchange].points -= 0.6;
-			} else if(actualPoints > 2500 && actualPoints <= 5000) {
-				this.users[toExchange].points -= 1.1;
-			} else if(actualPoints > 5000){
-				this.users[toExchange].points -= 2;
-			}
+			//if(this.users[toExchange] && this.users[toExchange].draw && data.heroData) {
+				this.users[toExchange].draw = data.heroData;
+			//}
 
 			this.socket.emit("refreshUsers", {
 				users: this.users,
 				points: this.points
 			});
 		});
-	}
-
-	handlePlayerWinnerCollision() {
-		
 	}
 
 	handlePointCollision() {
@@ -99,7 +133,7 @@ class Game {
 
 			for(let i = 0;i < this.users.length;++i) {
 				if(this.users[i].socket.toString() === this.socket.id.toString()) {
-					this.users[i].points += 1;
+					this.users[i].points += 10;
 					break;
 				}
 			}

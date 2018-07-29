@@ -12,7 +12,8 @@ class Login extends Component {
 		super(props);
 
 		this.state = {
-			username: ''
+			username: '',
+			playStatus: 'STOPPED'
 		};
 
 		this.handleLoginSubmit = this.handleLoginSubmit.bind(this);

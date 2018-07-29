@@ -2,6 +2,7 @@ import Koa from 'koa';
 import http from 'http';
 import bodyParser from 'koa-bodyparser';
 import validator from 'koa-validate';
+import serve from 'koa-static';
 import socket from 'socket.io';
 import config from './config/server.conf';
 import generateInitialPoints from './libs/generateInitialPoints';
@@ -19,8 +20,11 @@ app.use(bodyParser({
 	jsonLimit: '512kb'
 }));
 
+//
 validator(app);
 
+// statix fiels
+app.use(serve(__dirname + "/static"));
 // use controllers/routes
 app.use(ApiController.routes());
 
@@ -35,6 +39,7 @@ let users = [];
 let points = [];
 
 points = generateInitialPoints();
+const updateUsersPointsInterval = setInterval(() => Game.updateUsersPoints(users), 1000/60);
 
 io.sockets.on('connection', socket => {
 	game = new Game(io, socket, users, points);

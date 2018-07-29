@@ -1,5 +1,5 @@
 const initialState = {
-	username: 'czarek'
+	username: ''
 };
 
 export default (state = initialState, action) => {

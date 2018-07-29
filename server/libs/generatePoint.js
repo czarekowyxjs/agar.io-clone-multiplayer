@@ -23,7 +23,7 @@ export default (points) => {
 
 	return {
 		color: "rgb("+rand(50,230)+","+rand(50,230)+","+rand(50,230)+")",
-		r: 10,
+		r: 12,
 		x: x,
 		y: y
 	};

@@ -41,17 +41,26 @@ class Canvas extends Component {
 		height: 5000
 	}
 
+	animation = null
+
 	componentDidMount() {
 		this.init();
 	}
 
 	componentWillUnmount() {
+		this.props.socket.disconnect();
 		this.canvasRef.current.removeEventListener('resize', this.onResize, false);
 	}
 
 	init() {
+		this.canvasRef.current.width = window.innerWidth;
+		this.canvasRef.current.height = window.innerHeight;
+		this.ctx = this.canvasRef.current.getContext('2d');
+		//
 		this.props.socket.emit("join", {
-			username: this.props.user.username
+			username: this.props.user.username,
+			canvasWidth: this.canvasRef.current.width,
+			canvasHeight: this.canvasRef.current.height
 		});
 
 		this.props.socket.on('refreshUsers', data => {
@@ -59,14 +68,16 @@ class Canvas extends Component {
 			this.allPoints = data.points;
 		});
 
+		this.props.socket.on('lostGame', data => {
+			window.cancelAnimationFrame(this.animation);
+			this.props.history.replace("/lost");
+		});
+
 		this.props.socket.on("startGame", data => {
 			this.users = data.users;
 			this.allPoints = data.points;
 			this.privateSocket = data.socket;
 			//
-			this.canvasRef.current.width = window.innerWidth;
-			this.canvasRef.current.height = window.innerHeight;
-			this.ctx = this.canvasRef.current.getContext('2d');
 			window.addEventListener('mousemove', this.handleMouseMove, false);
 			//
 			const user = {
@@ -88,7 +99,7 @@ class Canvas extends Component {
 	}
 
 	draw(time) {
-		window.requestAnimationFrame(this.draw);
+		this.animation = window.requestAnimationFrame(this.draw);
 
 		if(time-this.config.last >= 1000/this.config.fps) {
 			this.config.last = time;
