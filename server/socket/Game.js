@@ -106,19 +106,26 @@ class Game {
 			//
 			let toExchange;
 			//
-			for(let i = 0;i < this.users.length;++i) {
-				if(this.users[i].socket === this.socket.id) {
-					toExchange = i;
-					break;
+			try {
+				for(let i = 0;i < this.users.length;++i) {
+					if(this.users[i].socket === this.socket.id) {
+						toExchange = i;
+						break;
+					}
 				}
-			}
-			// data exchange
-			this.users[toExchange].draw = data.heroData;
+				// data exchange
+				console.log(this.users[toExchange].draw);
+				if(this.users[toExchange]) {
+					this.users[toExchange].draw = data.heroData;
+				}
+				//
+				this.socket.emit("refreshUsers", {
+					users: this.users,
+					points: this.points
+				});
+			} catch(e) {
 
-			this.socket.emit("refreshUsers", {
-				users: this.users,
-				points: this.points
-			});
+			}
 		});
 	}
 
@@ -126,9 +133,9 @@ class Game {
 		this.socket.on("pointCollision", data => {
 			const index = data.pointIndex;
 			this.points.splice(index, 1);
-
+			//
 			this.points.push(generatePoint(this.points));
-
+			//
 			for(let i = 0;i < this.users.length;++i) {
 				if(this.users[i].socket.toString() === this.socket.id.toString()) {
 					this.users[i].points += 1;

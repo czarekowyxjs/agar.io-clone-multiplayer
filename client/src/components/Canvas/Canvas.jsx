@@ -21,7 +21,10 @@ class Canvas extends Component {
 		user: PropTypes.shape({
 			username: PropTypes.string
 		}),
-		socket: PropTypes.object
+		socket: PropTypes.object,
+		methods: PropTypes.shape({
+			lostGame: PropTypes.func
+		})
 	}
 
 	/**
@@ -56,8 +59,12 @@ class Canvas extends Component {
 	}
 
 	componentWillUnmount() {
+		window.removeEventListener('mousemove', this.handleMouseMove, false);
+		//		
+		this.props.socket.removeAllListeners('refreshUsers');
+		this.props.socket.removeAllListeners('lostGame');
+		this.props.socket.removeAllListeners('startGame');
 		this.props.socket.disconnect();
-		this.canvasRef.current.removeEventListener('resize', this.onResize, false);
 	}
 
 	init() {
@@ -78,6 +85,7 @@ class Canvas extends Component {
 
 		this.props.socket.on('lostGame', data => {
 			window.cancelAnimationFrame(this.animation);
+			this.props.methods.lostGame();
 			this.props.history.replace("/lost");
 		});
 

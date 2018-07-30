@@ -2,14 +2,14 @@
 
 ## Table of contents
 * [Basic information](#basic)
-	* How to run this app?
-	* Technologies used
-	* Features
+	* [How to run this app?](#how-run)
+	* [Technologies used](#technologies)
+	* [Features](#features)
 * [How it works?](#how-works)
-	* Player
-	* Enemies, how can kill their?
-	* Points, how to get them?
-	* Map - open area
+	* [Player](#player)
+	* [Enemies, how can kill their etc.?](#enemies)
+	* [Points](#points)
+	* [Map - open area](#map)
 * [License](#license)
 
 <a name="basic"/>

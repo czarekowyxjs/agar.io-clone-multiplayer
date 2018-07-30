@@ -5,6 +5,7 @@ import Sound from 'react-sound';
 import { connect } from 'react-redux';
 import socket_io from 'socket.io-client';
 import Canvas from '../Canvas/Canvas.jsx';
+import Rank from '../Rank/Rank.jsx';
 
 import "./Game.css";
 
@@ -21,10 +22,18 @@ class Game extends Component {
 		})
 	}
 
+	lostGame = () => {
+		console.log('lost');
+	}
+
 	render() {
 		if(!this.props.auth.logged) {
 			return <Redirect to="/"/>;
 		}
+
+		const canvasMethods = {
+			lostGame: this.lostGame
+		};
 
 		return (
 			<div className="game-window">
@@ -32,8 +41,18 @@ class Game extends Component {
 					<Sound 
 						url="/sounds/sound_001.mp3"
 						playStatus={Sound.status.PLAYING}
-						loop={true}/>
-					<Canvas {...this.props} user={this.props.user} socket={socket}/>
+						loop={true}
+					/>
+					<Rank
+						{...this.props}
+						socket={socket}
+					/>
+					<Canvas 
+						{...this.props} 
+						user={this.props.user} 
+						socket={socket}
+						methods={canvasMethods}
+					/>
 				</div>
 			</div>
 		);
