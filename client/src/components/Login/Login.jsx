@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import DefaultBackground from '../DefaultBackground/DefaultBackground.jsx';
 
 import { simpleLogin } from '../../actions/authActions';
 
@@ -42,16 +43,16 @@ class Login extends Component {
 			<div className="landing">
 				<div className="landing-auth">
 					<form onSubmit={this.handleLoginSubmit}> 
-						<label htmlFor="username">Username</label>
 						<input
 							type="text"
 							id="username"
 							onChange={(e) => this.setState({ username: e.target.value })}
 							value={this.state.username}
 						/>
-						<button type="submit">Play</button>
+						{this.state.username.length > 0 ? <button type="submit">Play</button> : <label htmlFor="username">Username</label>}
 					</form>
 				</div>
+				<DefaultBackground/>
 			</div>
 		);
 	}

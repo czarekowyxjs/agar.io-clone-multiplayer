@@ -58,7 +58,9 @@ class Game {
 			for(let i = 0;i < users.length;++i) {
 				if(users[i]) {
 					actualPoints = users[i].points;
-					if(actualPoints > 300 && actualPoints <= 500) {
+					if(actualPoints > 5 && actualPoints <= 300) {
+						users[i].points -= 0.005;
+					} else if(actualPoints > 300 && actualPoints <= 500) {
 						users[i].points -= 0.04;
 					} else if(actualPoints > 500 && actualPoints <= 700) {
 						users[i].points -= 0.06;
@@ -114,7 +116,6 @@ class Game {
 					}
 				}
 				// data exchange
-				console.log(this.users[toExchange].draw);
 				if(this.users[toExchange]) {
 					this.users[toExchange].draw = data.heroData;
 				}
@@ -123,6 +124,11 @@ class Game {
 					users: this.users,
 					points: this.points
 				});
+				//
+				this.socket.emit("usersList", {
+					users: this.users
+				});
+				//
 			} catch(e) {
 
 			}

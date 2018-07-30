@@ -1,0 +1,53 @@
+.global-rank {
+	position:absolute;
+	right:20px;
+	top:20px;
+	width:30%;
+	max-width:240px;
+}
+
+.globl-rank-content {
+	width:100%;
+	padding:8px;
+	border-radius:3px;
+	background-color:rgba(0,0,0,0.4);
+}
+
+.global-rank-title {
+	width:100%;
+	text-align:center;
+	padding:9px;
+}
+
+.global-rank-title > h3 {
+	color:#fff;
+	font-weight:600;
+	font-size:1rem;
+}
+
+.rank-item {
+	display:flex;
+	flex-direction:row;
+	align-items:flex-end;
+	justify-content:flex-start;
+	font-size:0.75rem;
+	padding:2px;
+}
+
+.rank-item-position, .rank-item-username, .rank-item-points {
+	padding:0px 2px;
+}
+
+.rank-item-position > p, .rank-item-username > p {
+	font-weight:600;
+}
+
+.rank-item-username > p, .rank-item-position > p, .rank-item-points > p {
+	color:#fbfbfb;
+}
+
+.rank-item-points {
+	margin-left:auto;
+}
+
+
