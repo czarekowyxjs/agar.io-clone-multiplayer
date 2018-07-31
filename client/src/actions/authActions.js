@@ -32,3 +32,9 @@ export const notLogged = (error) => {
 		error: error
 	};
 };
+
+export const logout = () => {
+	return {
+		type: "AUTH_LOGOUT"
+	};
+};

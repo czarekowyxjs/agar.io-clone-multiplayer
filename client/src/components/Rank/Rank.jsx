@@ -14,6 +14,8 @@ class Rank extends PureComponent {
 	}
 
 	componentDidMount() {
+		console.log(this.props.socket);
+		this.props.socket.connect();
 		this.props.socket.on('usersList', data => {
 			this.setState({
 				users: data.users

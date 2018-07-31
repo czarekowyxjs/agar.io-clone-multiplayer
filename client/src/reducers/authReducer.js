@@ -15,6 +15,8 @@ export default (state = initialState, action) => {
 				...state,
 				authError: action.error
 			};
+		case "AUTH_LOGOUT":
+			return initialState;
 		default:
 			return state;
 	}

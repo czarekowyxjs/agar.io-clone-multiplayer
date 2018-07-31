@@ -37,7 +37,7 @@ class Canvas extends Component {
 	
 	ctx = null
 	background = null
-	points = []
+	points = null
 	users = []
 	allPoints = []
 	privateSocket = ''
@@ -55,12 +55,23 @@ class Canvas extends Component {
 	animation = null
 
 	componentDidMount() {
+		this.props.socket.connect();
 		this.init();
 	}
 
 	componentWillUnmount() {
+		window.cancelAnimationFrame(this.animation);
 		window.removeEventListener('mousemove', this.handleMouseMove, false);
-		//		
+		//
+		this.config.last = 0;
+		this.ctx = null;
+		this.background = null;
+		this.points = null;
+		this.allPoints = null;
+		this.users = null;
+		this.privateSocket = '';
+		this.animation = null;
+		//
 		this.props.socket.removeAllListeners('refreshUsers');
 		this.props.socket.removeAllListeners('lostGame');
 		this.props.socket.removeAllListeners('startGame');
@@ -84,9 +95,7 @@ class Canvas extends Component {
 		});
 
 		this.props.socket.on('lostGame', data => {
-			window.cancelAnimationFrame(this.animation);
-			this.props.methods.lostGame();
-			this.props.history.replace("/lost");
+			this.props.methods.lostGame(data);
 		});
 
 		this.props.socket.on("startGame", data => {

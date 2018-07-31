@@ -255,9 +255,7 @@ class Hero {
 		//const pointR = point.r-(this.reachedPoints/200);
 		//
 		if(distance < this.r) {
-			if(this.lastPointCollision.pointX === pointX && this.lastPointCollision.pointY === pointY) {
-
-			} else {
+			if(this.lastPointCollision.pointX !== pointX && this.lastPointCollision.pointY !== pointY) {
 				this.lastPointCollision = {
 					pointX: pointX,
 					pointY: pointY

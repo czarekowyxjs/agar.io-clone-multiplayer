@@ -22,8 +22,13 @@ class Game extends Component {
 		})
 	}
 
-	lostGame = () => {
-		console.log('lost');
+	lostGame = (data) => {
+		this.props.history.replace({
+			pathname: '/lost',
+			state: {
+				killData: data
+			}
+		});
 	}
 
 	render() {
