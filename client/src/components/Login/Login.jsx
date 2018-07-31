@@ -52,6 +52,14 @@ class Login extends Component {
 						{this.state.username.length > 0 ? <button type="submit">Play</button> : <label htmlFor="username">Username</label>}
 					</form>
 				</div>
+				<div className="landing-media">
+					<div className="landing-item github">
+						<a href="https://github.com/czarekowyxjs/agar.io-clone-multiplayer" target="_BLANK">
+							<img src="/images/github.svg" alt="Github account"/>
+							<p>czarekowyxjs</p>
+						</a>
+					</div>
+				</div>
 				<DefaultBackground/>
 			</div>
 		);
