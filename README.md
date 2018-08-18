@@ -1,6 +1,6 @@
 # agar.io game - clone multiplayer
 
-![present image](https://github.com/czarekowyxjs/agar.io-clone-multiplayer/doc/tree/master/doc/img/gl-photo.gif)
+![present image](https://github.com/czarekowyxjs/agar.io-clone-multiplayer/blob/master/doc/img/gl-photo.gif)
 
 ## Table of contents
 * [Basic information](#basic)
