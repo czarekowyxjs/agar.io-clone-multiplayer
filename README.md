@@ -1,5 +1,7 @@
 # agar.io game - clone multiplayer
 
+![present image](https://github.com/czarekowyxjs/agar.io-clone-multiplayer/doc/tree/master/doc/img/gl-photo.gif)
+
 ## Table of contents
 * [Basic information](#basic)
 	* [How to run this app?](#how-run)
@@ -9,20 +11,44 @@
 	* [Player](#player)
 	* [Enemies, how can kill their etc.?](#enemies)
 	* [Points](#points)
-	* [Map - open area](#map)
+	* [Map](#map)
 * [License](#license)
 
 <a name="basic"/>
 
 ## Basic information
 
-I am still working.
+<a name="how-run"/>
+
+### How to run this app?
+
+<a name="technologies"/>
+
+### Technologies used
+
+<a name="features"/>
+
+### Features
 
 <a name="how-works"/>
 
 ## How it works?
 
-I am still working.
+<a name="player"/>
+
+### Player
+
+<a name="enemies"/>
+
+### Enemies, how can kill their etc.?
+
+<a name="points"/>
+
+### Points
+
+<a name="map"/>
+
+### Map 
 
 <a name="license"/>
 
